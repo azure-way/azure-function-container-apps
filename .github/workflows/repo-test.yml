@@ -1,11 +1,13 @@
 name: Terraform test build
 on:
+  schedule:
+    - cron: "0 20 * * 1"   # <=== Change this value      
   workflow_dispatch:
     inputs:
       directory:
         type: string
         default: './terraform'
-
+    
 jobs:
   terraform-build:
     runs-on: ubuntu-latest
