@@ -1,6 +1,6 @@
 name: Terrafor test build
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       directory:
         type: string
