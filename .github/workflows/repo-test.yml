@@ -39,6 +39,15 @@ jobs:
         run: terraform apply --auto-approve -input=false -var="spn-client-id=${{secrets.spn_client_id}}" -var="spn-client-secret=${{secrets.spn_client_secret}}" -var="spn-tenant-id=${{secrets.AZURE_TENANT_ID}}" -var="subscription-id=${{secrets.subscription_id}}"
         continue-on-error: false        
 
+      - name: Terraform init reconfigure
+        run: terraform init -reconfigure -backend-config="access_key=${{secrets.access_key}}" -backend-config="storage_account_name=${{secrets.storage_account_name}}" -backend-config="container_name=${{secrets.container_name}}" -backend-config="key=azfunction-aca"
+        continue-on-error: false            
+  
+      - name: Terraform Destroy
+        id: destroy
+        run: terraform destroy --auto-approve -input=false -var="spn-client-id=${{secrets.spn_client_id}}" -var="spn-client-secret=${{secrets.spn_client_secret}}" -var="spn-tenant-id=${{secrets.AZURE_TENANT_ID}}" -var="subscription-id=${{secrets.subscription_id}}" 
+        continue-on-error: false            
+
       - name: Build-A-Badge-Success
         if: ${{ inputs.directory == './terraform' && success() }} 
         uses: peterrhodesdev/build-a-badge@v1.3.0
@@ -62,11 +71,3 @@ jobs:
           namedLogo: github
           labelColor: "#FF0000"
           color: "#3272d3"     
-      - name: Terraform init reconfigure
-        run: terraform init -reconfigure -backend-config="access_key=${{secrets.access_key}}" -backend-config="storage_account_name=${{secrets.storage_account_name}}" -backend-config="container_name=${{secrets.container_name}}" -backend-config="key=azfunction-aca"
-        continue-on-error: false            
-  
-      - name: Terraform Destroy
-        id: destroy
-        run: terraform destroy --auto-approve -input=false -var="spn-client-id=${{secrets.spn_client_id}}" -var="spn-client-secret=${{secrets.spn_client_secret}}" -var="spn-tenant-id=${{secrets.AZURE_TENANT_ID}}" -var="subscription-id=${{secrets.subscription_id}}" 
-        continue-on-error: false            
