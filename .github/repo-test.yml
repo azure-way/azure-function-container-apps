@@ -1,0 +1,67 @@
+name: Terrafor test build
+on:
+  workflow_call:
+    inputs:
+      directory:
+        type: string
+        default: './terraform'
+
+jobs:
+  terraform-build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ${{ inputs.directory }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+
+      - name: Install terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Install Nodejs
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Terraform Init
+        id: init
+        run: terraform init -backend-config="access_key=${{secrets.access_key}}" -backend-config="storage_account_name=${{secrets.storage_account_name}}" -backend-config="container_name=${{secrets.container_name}}""
+    
+      - name: Terraform Apply
+        id: apply
+        run: terraform apply --auto-approve -input=false -var="spn-client-id=${{secrets.spn_client_id}}" -var="spn-client-secret=${{secrets.spn_client_secret}}" -var="spn-tenant-id=${{secrets.AZURE_TENANT_ID}}" -var="subscription-id=${{secrets.subscription_id}}"
+        continue-on-error: false        
+
+      - name: Build-A-Badge-Success
+        if: ${{ inputs.directory == './terraform' && success() }} 
+        uses: peterrhodesdev/build-a-badge@v1.3.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filename: azure-funtion-on-azure-container-apps
+          label: azure-funtion-on-azure-container-apps
+          message: "build date: ${{ steps.date.outputs.date }}"
+          namedLogo: github
+          labelColor: "#008000"
+          color: "#3272d3"
+
+      - name: Build-A-Badge-Failure
+        if: ${{ inputs.directory == './terraform' && failure() }} 
+        uses: peterrhodesdev/build-a-badge@v1.3.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          filename: azure-funtion-on-azure-container-apps
+          label: azure-funtion-on-azure-container-apps
+          message: "build date: ${{ steps.date.outputs.date }}"
+          namedLogo: github
+          labelColor: "#FF0000"
+          color: "#3272d3"     
+            
+      - name: Terraform Dystroy
+        id: dystory
+        run: terraform dystory --auto-approve -input=false -var="spn-client-id=${{secrets.spn_client_id}}" -var="spn-client-secret=${{secrets.spn_client_secret}}" -var="spn-tenant-id=${{secrets.AZURE_TENANT_ID}}" -var="subscription-id=${{secrets.subscription_id}}"
+        continue-on-error: false            
