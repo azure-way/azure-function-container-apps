@@ -121,12 +121,14 @@ resource "azurerm_storage_container" "example" {
   container_access_type = "private"
 }
 
-module "indexer_app" {
+module "azfunction_app" {
   source = "./modules/container_app"
 
-  name_prefix                  = "${var.name_prefix}-blob-trigger"
-  container_app_environment_id = module.container_app_environment.id
   resource_group_name          = azurerm_resource_group.rg.name
+  
+  name_prefix                  = "${var.name_prefix}-blob-trigger"
+  
+  container_app_environment_id = module.container_app_environment.id
   
   image                        = var.image_with_tag
   container_registry_url       = module.container_registry.login_server
