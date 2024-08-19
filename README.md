@@ -10,3 +10,6 @@ In May 2024, the option to run Azure Functions on Azure Container Apps was relea
 In this repo, you can find:
 * A Terraform script for creating Azure Container Apps and building a Docker image.
 * A Python app with an Azure Storage Account Trigger.
+
+A more detailed description you can find on my blog: 
+[Running Azure Functions in Container Apps with Terraform](https://azureway.cloud/running-azure-functions-in-container-apps-with-terraform/)
