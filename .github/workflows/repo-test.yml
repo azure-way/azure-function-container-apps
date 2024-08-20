@@ -1,7 +1,7 @@
 name: Terraform test build
 on:
   schedule:
-    - cron: "0 20 * * 1"   # <=== Change this value      
+    - cron: "15 06 * * 2"   # <=== Change this value      
   workflow_dispatch:
     inputs:
       directory:
@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ inputs.directory }}
+        working-directory: ${{ inputs.directory || './terraform' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
